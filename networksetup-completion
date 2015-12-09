@@ -1,0 +1,153 @@
+# vim: ft=sh 
+#
+#
+
+#                __                      __             __            
+#    ____  ___  / /__      ______  _____/ /__________  / /___  ______ 
+#   / __ \/ _ \/ __/ | /| / / __ \/ ___/ //_/ ___/ _ \/ __/ / / / __ \
+#  / / / /  __/ /_ | |/ |/ / /_/ / /  / ,< (__  )  __/ /_/ /_/ / /_/ /
+# /_/ /_/\___/\__/ |__/|__/\____/_/  /_/|_/____/\___/\__/\__,_/ .___/ 
+#                                                            /_/      
+# 
+_networksetup() {
+  local cur prev opts base
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+  commands="-listnetworkserviceorder -listallnetworkservices -listallhardwareports -detectnewhardware -getmacaddress -getcomputername -setcomputername -getinfo -setmanual -setdhcp -setbootp -setmanualwithdhcprouter -getadditionalroutes -setadditionalroutes -setv4off -setv6off -setv6automatic -setv6LinkLocal -setv6manual -getv6additionalroutes -setv6additionalroutes -getdnsservers -setdnsservers -getsearchdomains -setsearchdomains -create6to4service -set6to4automatic -set6to4manual -getftpproxy -setftpproxy -setftpproxystate -getwebproxy -setwebproxy -setwebproxystate -getsecurewebproxy -setsecurewebproxy -setsecurewebproxystate -getstreamingproxy -setstreamingproxy -setstreamingproxystate -getgopherproxy -setgopherproxy -setgopherproxystate -getsocksfirewallproxy -setsocksfirewallproxy -setsocksfirewallproxystate -getproxybypassdomains -setproxybypassdomains -getproxyautodiscovery -setproxyautodiscovery -getpassiveftp -setpassiveftp -getairportnetwork -setairportnetwork -getairportpower -setairportpower -listpreferredwirelessnetworks -addpreferredwirelessnetworkati -removepreferredwirelessnetwork -removeallpreferredwirelessnetw -getnetworkserviceenabled -setnetworkserviceenabled -createnetworkservice -renamenetworkservice -duplicatenetworkservice -removenetworkservice -ordernetworkservices -getMTU -setMTU -listvalidMTUrange -getmedia -setmedia -listvalidmedia -createVLAN -deleteVLAN -listVLANs -listdevicesthatsupportVLAN -isBondSupported -createBond -deleteBond -addDeviceToBond -removeDeviceFromBond -listBonds -showBondStatus -listpppoeservices -showpppoestatus -createpppoeservice -deletepppoeservice -setpppoeaccountname -setpppoepassword -connectpppoeservice -disconnectpppoeservice -getcurrentlocation -listlocations -createlocation -deletelocation -switchtolocation -listalluserprofiles -listloginprofiles -enablesystemprofile -enableloginprofile -enableuserprofile -import8021xProfiles -export8021xProfiles -export8021xUserProfiles -export8021xLoginProfiles -export8021xSystemProfile -settlsidentityonsystemprofile -settlsidentityonuserprofile -deleteloginprofile -deleteuserprofile -version -help -printcommands"
+
+	case "${prev}" in
+    -getmacaddress|-getMTU|-setMTU|-listvalidMTUrange|-getmedia|-setmedia|-listvalidmedia|-getairportnetwork|-setairportnetwork|-getairportpower|-setairportpower|-listpreferredwirelessnetworks|-addpreferredwirelessnetworkatindex|-removepreferredwirelessnetwork|-removeallpreferredwirelessnetworks)
+      args=$(ifconfig -l)
+      COMPREPLY=( $(compgen -W "${args}" -- "${cur}") )
+      return 0
+      ;;
+    -getinfo|-setmanual|-setdhcp|-setbootp|-setmanualwithdhcprouter|-getadditionalroutes|-setadditionalroutes|-setv4off|-setv6off|-setv6automatic|-setv6LinkLocal|-setv6manual|-getv6additionalroutes|-setv6additionalroutes|-getdnsservers|-setdnsservers|-getsearchdomains|-setsearchdomains|-create6to4service|-set6to4automatic|-set6to4manual|-getftpproxy|-setftpproxy|-setftpproxystate|-getwebproxy|-setwebproxy|-setwebproxystate|-getsecurewebproxy|-setsecurewebproxy|-setsecurewebproxystate|-getstreamingproxy|-setstreamingproxy|-setstreamingproxystate|-getgopherproxy|-setgopherproxy|-setgopherproxystate|-getsocksfirewallproxy|-setsocksfirewallproxy|-setsocksfirewallproxystate|-getproxybypassdomains|-setproxybypassdomains|-getproxyautodiscovery|-setproxyautodiscovery|-getpassiveftp|-setpassiveftp)
+      args=$(networksetup -listallnetworkservices|sed 1d)
+      COMPREPLY=( $(compgen -W "${args}" -- "${cur}") )
+      return 0
+      ;;
+
+	esac
+  
+  COMPREPLY=($(compgen -W "${commands}" -- "${cur}"))
+  return 0
+}
+
+complete -F _networksetup networksetup
+
+# -listnetworkserviceorder
+# -listallnetworkservices
+# -listallhardwareports
+# -detectnewhardware
+# -getmacaddress                       <hardwareport or device name>
+# -getcomputername
+# -setcomputername                     <name>
+# -getinfo                             <networkservice>
+# -setmanual                           <networkservice>                    <ip>                                 <subnet>                                       <router>
+# -setdhcp                             <networkservice> [clientid]
+# -setbootp                            <networkservice>
+# -setmanualwithdhcprouter             <networkservice>                    <ip>
+# -getadditionalroutes                 <networkservice>
+# -setadditionalroutes                 <networkservice> [                  <dest>                               <mask>                                         <gateway> ]*
+# -setv4off                            <networkservice>
+# -setv6off                            <networkservice>
+# -setv6automatic                      <networkservice>
+# -setv6LinkLocal                      <networkservice>
+# -setv6manual                         <networkservice>                    <networkservice>                     <address>                                      <prefixlength>                   <router>
+# -getv6additionalroutes               <networkservice>
+# -setv6additionalroutes               <networkservice> [                  <dest>                               <prefixlength>                                 <gateway> ]*
+# -getdnsservers                       <networkservice>
+# -setdnsservers                       <networkservice>                    <dns1> [dns2] [...]
+# -getsearchdomains                    <networkservice>
+# -setsearchdomains                    <networkservice>                    <domain1> [domain2] [...]
+# -create6to4service                   <newnetworkservicename>
+# -set6to4automatic                    <networkservice>
+# -set6to4manual                       <networkservice>                    <relayaddress>
+# -getftpproxy                         <networkservice>
+# -setftpproxy                         <networkservice>                    <domain>                             <port number>                                  <authenticated>                  <username>  <password>
+# -setftpproxystate                    <networkservice>                    <on off>
+# -getwebproxy                         <networkservice>
+# -setwebproxy                         <networkservice>                    <domain>                             <port number>                                  <authenticated>                  <username>  <password>
+# -setwebproxystate                    <networkservice>                    <on off>
+# -getsecurewebproxy                   <networkservice>
+# -setsecurewebproxy                   <networkservice>                    <domain>                             <port number>                                  <authenticated>                  <username>  <password>
+# -setsecurewebproxystate              <networkservice>                    <on off>
+# -getstreamingproxy                   <networkservice>
+# -setstreamingproxy                   <networkservice>                    <domain>                             <port number>                                  <authenticated>                  <username>  <password>
+# -setstreamingproxystate              <networkservice>                    <on off>
+# -getgopherproxy                      <networkservice>
+# -setgopherproxy                      <networkservice>                    <domain>                             <port number>                                  <authenticated>                  <username>  <password>
+# -setgopherproxystate                 <networkservice>                    <on off>
+# -getsocksfirewallproxy               <networkservice>
+# -setsocksfirewallproxy               <networkservice>                    <domain>                             <port number>                                  <authenticated>                  <username>  <password>
+# -setsocksfirewallproxystate          <networkservice>                    <on off>
+# -getproxybypassdomains               <networkservice>
+# -setproxybypassdomains               <networkservice>                    <domain1> [domain2] [...]
+# -getproxyautodiscovery               <networkservice>
+# -setproxyautodiscovery               <networkservice>                    <on off>
+# -getpassiveftp                       <networkservice>
+# -setpassiveftp                       <networkservice>                    <on off>
+# -getairportnetwork                   <device name>
+# -setairportnetwork                   <device name>                       <network> [password]
+# -getairportpower                     <device name>
+# -setairportpower                     <device name>                       <on off>
+# -listpreferredwirelessnetworks       <device name>
+# -addpreferredwirelessnetworkatindex  <device name>                       <network>                            <index>                                        <security type> [password]
+# -removepreferredwirelessnetwork      <device name>                       <network>
+# -removeallpreferredwirelessnetworks  <device name>
+# -getnetworkserviceenabled            <networkservice>
+# -setnetworkserviceenabled            <networkservice>                    <on off>
+# -createnetworkservice                <newnetworkservicename>             <hardwareport>
+# -renamenetworkservice                <networkservice>                    <newnetworkservicename>
+# -duplicatenetworkservice             <networkservice>                    <newnetworkservicename>
+# -removenetworkservice                <networkservice>
+# -ordernetworkservices                <service1>                          <service2>                           <service3>                                     <...>
+# -getMTU                              <hardwareport or device name>
+# -setMTU                              <hardwareport or device name>       <value>
+# -listvalidMTUrange                   <hardwareport or device name>
+# -getmedia                            <hardwareport or device name>
+# -setmedia                            <hardwareport or device name>       <subtype> [option1] [option2] [...]
+# -listvalidmedia                      <hardwareport or device name>
+# -createVLAN                          <VLAN name>                         <parent device name>                 <tag>
+# -deleteVLAN                          <VLAN name>                         <parent device name>                 <tag>
+# -listVLANs
+# -listdevicesthatsupportVLAN
+# -isBondSupported                     <hardwareport>
+# -createBond                          <bondname>                          <hardwareport1>                      <hardwareport2>                                <...>
+# -deleteBond                          <bonddevicename>
+# -addDeviceToBond                     <hardwareport>                      <bonddevicename>
+# -removeDeviceFromBond                <hardwareport>                      <bonddevicename>
+# -listBonds
+# -showBondStatus                      <bonddevicename>
+# -listpppoeservices
+# -showpppoestatus                     <service name ie., MyPPPoEService>
+# -createpppoeservice                  <device name ie., en0>              <service name>                       <account name>                                 <password> [pppoe service name]
+# -deletepppoeservice                  <service name>
+# -setpppoeaccountname                 <service name>                      <account name>
+# -setpppoepassword                    <service name>                      <password>
+# -connectpppoeservice                 <service name>
+# -disconnectpppoeservice              <service name>
+# -getcurrentlocation
+# -listlocations
+# -createlocation                      <location name> [populate]
+# -deletelocation                      <location name>
+# -switchtolocation                    <location name>
+# -listalluserprofiles
+# -listloginprofiles                   <service name>
+# -enablesystemprofile                 <service name>                      <on off>
+# -enableloginprofile                  <service name>                      <profile name>                       <on off>
+# -enableuserprofile                   <profile name>                      <on off>
+# -import8021xProfiles                 <service name>                      <file path>
+# -export8021xProfiles                 <service name>                      <file path>                          <yes no>
+# -export8021xUserProfiles             <file path>                         <yes no>
+# -export8021xLoginProfiles            <service name>                      <file path>                          <yes no>
+# -export8021xSystemProfile            <service name>                      <file path>                          <yes no>
+# -settlsidentityonsystemprofile       <service name>                      <file path>                          <passphrase>
+# -settlsidentityonuserprofile         <profile name>                      <file path>                          <passphrase>networksetup -deletesystemprofile  <service name>
+# -deleteloginprofile                  <service name>                      <profile name>
+# -deleteuserprofile                   <profile name>
+# -version
+# -help
+# -printcommands
